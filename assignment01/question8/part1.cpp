@@ -63,14 +63,12 @@ void print_contacts(const ContactList &contacts) {
     cout << "  #  |                  Name  |                  Family  |          Phone numbers" << endl;
     cout << line;//16|18
     for (int i = 0; i < contacts.size(); ++i) {
-        if (i < 100) {
-            cout << setw(3) << i + 1 << "  |";
-        } else {
-            cout << setw(3) << i + 1 << " |";
-        }
+
+        cout << setw(3) << i + 1 << "  |";
         cout << setw(22) << contacts[i].first_name << "  |";
         cout << setw(24) << contacts[i].last_name << "  |";
         cout << setw(22) << contacts[i].phone_numbers[0];
+        
         if (contacts[i].phone_numbers.size() > 1) {
             cout << endl;
             for (int j = 0; j < contacts[i].phone_numbers.size() - 1; ++j) {
