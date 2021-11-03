@@ -30,7 +30,7 @@ string standard_name(string name);
 
 int main() {
     ContactList contacts;
-    contacts.push_back(Contact{"Ali", "Reza", vector<string>{"123", "09121212121"}});
+    contacts.push_back(Contact{"ali", "Reza", vector<string>{"123", "09121212121"}});
     contacts.push_back(Contact{"Gholi", "Faza", vector<string>{"567"}});
     contacts.push_back(Contact{"Ali", "Gholi", vector<string>{"12", "33", "23"}});
     contacts.push_back(Contact{"Soltan ali reza", "Gholi", vector<string>{"12", "33", "3213231312"}});
@@ -68,7 +68,7 @@ void print_contacts(const ContactList &contacts) {
         cout << setw(22) << contacts[i].first_name << "  |";
         cout << setw(24) << contacts[i].last_name << "  |";
         cout << setw(22) << contacts[i].phone_numbers[0];
-        
+
         if (contacts[i].phone_numbers.size() > 1) {
             cout << endl;
             for (int j = 0; j < contacts[i].phone_numbers.size() - 1; ++j) {
@@ -112,7 +112,7 @@ Contact search_by_name(ContactList &contacts, string name) {
 string standard_name(string name) {
     string result = name;
     if (name[0] >= 'a' && name[0] <= 'z') {
-        result[0] = result[0] - 32;
+        result[0] -= 32;
     }
 
     return result;
