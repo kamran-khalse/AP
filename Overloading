@@ -1,0 +1,180 @@
+
+//Operators That Can Overload :==(equals) ,  ++x,x++(inc_one_day) , <<(print_date) , =(assighn)
+#include <iostream>
+#include <cstdlib>
+#include <string>
+#include <string.h>
+using namespace std;
+
+class Date {
+    friend ostream& operator<<(ostream &out ,const Date &d);
+
+public:
+    Date(int, int, int);
+    //Date();
+
+    void set_date(int d, int m, int y);
+    void print_date();
+    bool equals(Date d);
+    //static
+
+    static int days_between(Date d1, Date d2);
+    static Date str_to_date(string s);
+    static int max_day_for_month(int m, int y);
+    static bool is_leap_year(int year);
+    //Getters
+
+    int get_day() { return day; }
+    int get_month() { return month; }
+    int get_year() { return year; }
+    Date& operator=(const Date& d);
+    //Date operator=(const string & strDate);
+    bool operator==(const Date& d ) const;//rDate->right Date  , X==D
+
+    Date& operator++();  //preIncrement
+    Date operator++(int);  //postIncrement
+
+private:
+    int day;
+    int month;
+    int year;
+    //Utilies Functions
+    void inc_one_day();
+};
+
+Date::Date(int d, int m, int y)
+{
+    //constructor
+    set_date(d, m, y);
+}
+/*Date::Date()
+{
+    //default constructor
+    set_date(1, 1, 1390);
+}*/
+
+bool Date::is_leap_year(int year)
+{
+    int r = year % 33;
+    return r==1 || r==5 || r==9 || r==13 || r==17 || r==22 || r==26 || r==30;
+}
+
+int Date::max_day_for_month(int m, int y)
+{
+    if (m < 7)
+        return 31;
+    else if (m < 12)
+        return 30;
+    else if (m == 12)
+        return is_leap_year(y) ? 30 : 29;
+    else
+        abort();
+}
+
+void Date::inc_one_day()
+{
+    day++;
+    if (day > max_day_for_month(month, year)) {
+        day = 1;
+        month++;
+        if (month > 12) {
+            month = 1;
+            year++;
+        }
+    }
+}
+
+void Date::set_date(int d, int m, int y)
+{
+    if (y < 0 || m < 1 || m > 12 || d < 1 || d > max_day_for_month(m, y))
+        abort();
+
+    day = d;
+    month = m;
+    year = y;
+}
+
+void Date::print_date()
+{
+    //baraye chape tarikh
+    cout << day << '/' << month << '/' << year << endl;
+}
+//-----------------------------------------------------------------------------
+bool Date::equals(Date d) {
+    //moghaieseye 2 tarikh
+    return day == d.day && month == d.month && year == d.year;
+}
+
+bool Date::operator==(const Date &d) const
+{
+    return (day==d.day)&&(month==d.month)&&(year==d.year) ;
+}
+
+//-----------------------------------------------------------------------------
+int Date::days_between(Date d1, Date d2) {
+    // Assuming d1 is not later than d2
+    int count = 1;
+    while (!d1.equals(d2)) {
+        d1.inc_one_day();
+        count++;
+    }
+    return count;
+}
+
+Date Date::str_to_date(string s) {
+    //TODO: Handle formatting errors
+    int slash_pos = s.find('/'); //3/12/1394 => slash_pos=1
+    int d = stoi(s.substr(0, slash_pos)); //=> d=3
+    s = s.substr(slash_pos + 1);//=>s=12/1394
+    slash_pos = s.find('/');//=>slash_pos=2
+    int m = stoi(s.substr(0, slash_pos));//=>m=12
+    int y = stoi(s.substr(slash_pos + 1));//=>y=1394
+
+    return Date(d, m, y);
+}
+Date& Date::operator=(const Date &d)
+{
+    if(this !=&d)
+    {
+        day=d.day;
+        month=d.month;
+        year=d.year;
+    }
+    return *this;
+}
+
+/*Date Date::operator=(const string &strDate)
+{
+    return str_to_date(strDate);
+}*/
+//preIncrement
+Date& Date::operator++()
+{
+    inc_one_day();
+    return *this;// refrance return
+}
+// overloaded postIncrement operator
+// note that the dummy integer parameter does not have a parameter name
+Date Date::operator++(int)
+{
+    Date postDate=*this;
+    inc_one_day();
+    return postDate; //value return
+
+}
+// overloaded output operator
+ostream& operator<<(ostream& out ,const Date &d)
+{
+    out<< d.day << '/' << d.month << '/' << d.year << endl;
+    return out;
+}
+
+int main()
+{
+    string s = "3/12/1394";
+    Date l(1,25,36);
+    cout<<l;
+    system("pause");
+    return 0;
+
+}
