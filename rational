@@ -69,7 +69,7 @@ private:
 
 
 Rational::Rational(const int _numerator, const int _denominator)
-    :numerator(_numerator),denominator(_denominator)
+        :numerator(_numerator),denominator(_denominator)
 {
     if (!isValid())
     {
@@ -78,7 +78,7 @@ Rational::Rational(const int _numerator, const int _denominator)
     reduce();
 }
 Rational::Rational(const int _numerator)
-    :numerator(_numerator),denominator(1)
+        :numerator(_numerator),denominator(1)
 {
     if(!isValid())
     {
@@ -201,9 +201,10 @@ Rational& Rational::operator+=(const double& right)
 {
     return *this += decimalToRational(right);
 }
-double operator+=(double left ,const Rational& right)
+Rational operator+=(double &left , const Rational& right)
 {
     Rational temp=right+left;
+    left = float(temp.getNumerator())/temp.getDenominator();
     return temp ;
     //return right+left;
     /*left+=right.getNumerator()/right.getDenominator();
@@ -355,6 +356,7 @@ int main()
     Rational a(1,2),c;
     double d=3;
     c+=((d+=a)+a)+d;
+    cout << d << endl;
     cout<<c;
     return 0;
 }
