@@ -1,0 +1,360 @@
+#include <cmath>
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <sstream>
+using namespace std;
+class Rational
+{
+    friend ostream& operator<<(ostream& out ,const Rational& right);
+public:
+    Rational(const int numerator, const int denominator);
+    Rational(const int = 0 );
+    Rational& add(const Rational &);
+    Rational& substract(const Rational &);
+    Rational& multiply(const Rational &);
+    Rational& divide(const Rational &);
+
+    bool operator==(const Rational &) const ;
+    bool operator!=(const Rational &right) const
+    {
+        return !(*this==right);
+    }
+    bool operator> (const Rational &) const ;
+    bool operator>= (const Rational &right) const
+    {
+        return operator>(right) || operator==(right);
+    }
+    bool operator< (const Rational &right) const
+    {
+        return !(operator>(right)) && !(operator==(right));
+    }
+    bool operator<= (const Rational &right) const
+    {
+        return (operator<(right)) || (operator==(right));
+    }
+
+    Rational operator+ (const Rational &) const;
+    Rational operator+(double );
+    Rational& operator+=(const Rational&);
+    Rational& operator+=(const double&);
+    Rational operator- (const Rational &) const;
+    Rational operator-(double );
+
+    Rational operator* (const Rational &) const;
+    Rational operator/ (const Rational &) const;
+
+    void print() const;
+    void printFloat() const;
+
+    int getNumerator(void) const
+    {
+        return this->numerator;
+    }
+    int getDenominator(void) const
+    {
+        return this->denominator;
+    }
+
+private:
+    unsigned gcd(unsigned, unsigned ) const;
+    void reduce();
+    unsigned lcm(unsigned, unsigned ) const;
+    Rational decimalToRational(double input);
+    bool isValid() const;
+
+    int numerator;
+    int denominator;
+};
+
+
+Rational::Rational(const int _numerator, const int _denominator)
+    :numerator(_numerator),denominator(_denominator)
+{
+    if (!isValid())
+    {
+        throw "Invalid, zero denominator";
+    }
+    reduce();
+}
+Rational::Rational(const int _numerator)
+    :numerator(_numerator),denominator(1)
+{
+    if(!isValid())
+    {
+        throw "Invalid, zero denominator";
+    }
+    reduce();
+}
+Rational & Rational::add(const Rational &b)
+{
+    // TODO: insert return statement here
+    unsigned leastCommonMultiple = lcm(abs(this->denominator), abs(b.denominator));
+
+    this->numerator *= leastCommonMultiple / abs(this->denominator);
+    this->numerator += b.numerator * (leastCommonMultiple / abs(b.denominator));
+    this->denominator = leastCommonMultiple;
+
+    if (!isValid())
+    {
+        throw "Invalid, zero denominator";
+    }
+
+    reduce();
+
+    return *this;
+}
+
+Rational & Rational::substract(const Rational &b)
+{
+    // TODO: insert return statement here
+    unsigned leastCommonMultiple = lcm(abs(this->denominator), abs(b.denominator));
+
+    this->numerator *= leastCommonMultiple / abs(this->denominator);
+    this->numerator -= b.numerator * (leastCommonMultiple / abs(b.denominator));
+    this->denominator = leastCommonMultiple;
+
+    if (!isValid())
+    {
+        throw "Invalid, zero denominator";
+    }
+
+    reduce();
+
+    return *this;
+}
+
+Rational & Rational::multiply(const Rational &b)
+{
+    // TODO: insert return statement here
+    this->numerator *= b.numerator;
+    this->denominator *= b.denominator;
+
+    if (!isValid())
+    {
+        throw "Invalid, zero denominator";
+    }
+
+    reduce();
+
+    return *this;
+}
+
+Rational & Rational::divide(const Rational &b)
+{
+    // TODO: insert return statement here
+    this->numerator *= b.denominator;
+    this->denominator *= b.numerator;
+
+    if (!isValid())
+    {
+        throw "Invalid, zero denominator";
+    }
+
+    reduce();
+
+    return *this;
+}
+
+bool Rational::operator==(const Rational &right) const
+{
+    if (getDenominator() != right.getDenominator() || getNumerator() != right.getNumerator())
+    {
+        return false;
+    }
+    return true;
+}
+
+bool Rational::operator>(const Rational &right) const
+{
+    if ((*this - right).getDenominator() * (*this - right).getNumerator() > 0)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+Rational Rational::operator+(const Rational& right)const
+{
+    Rational temp = *this ;
+    temp.add(right);
+    return temp;
+}
+
+Rational Rational::operator+(double right)
+{
+    return  *this + decimalToRational(right) ;
+}
+Rational operator+(double left ,const Rational& right )
+{
+    Rational temp=right;
+
+    return temp+left;
+}
+Rational& Rational::operator+=(const Rational& right)
+{
+    *this = *this + right ;
+    return *this ;
+}
+Rational& Rational::operator+=(const double& right)
+{
+    return *this += decimalToRational(right);
+}
+double operator+=(double left ,const Rational& right)
+{
+    Rational temp=right+left;
+    return temp ;
+    //return right+left;
+    /*left+=right.getNumerator()/right.getDenominator();
+    return left;*/
+}
+Rational Rational::operator-(const Rational &right) const
+{
+    Rational temp = *this ;
+    temp.substract(right);
+    return temp;
+}
+Rational Rational::operator-(double right)
+{
+    return  *this - decimalToRational(right) ;
+}
+
+Rational operator-(double left ,const Rational& right )
+{
+    Rational temp=right;
+
+    return (temp-left)*Rational(-1) ;//multiply by -1 for getting left-right
+}
+Rational Rational::operator*(const Rational &right) const
+{
+    Rational temp = *this ;
+    temp.multiply(right);
+    return temp;
+}
+
+Rational Rational::operator/(const Rational &right) const
+{
+    Rational temp=*this;
+    temp.divide(right);
+    return temp;
+}
+
+void Rational::print() const
+{
+    if (0 == denominator)
+    {
+        std::cout << "Error, zero denorminator\n";
+    }
+    else
+    {
+        std::cout << numerator << "/" << denominator << std::endl;
+    }
+}
+
+void Rational::printFloat() const
+{
+    if (0 == denominator) { cout << "Error, zero denorminator\n"; }
+    else { cout << static_cast<double>(numerator) / static_cast<double>(denominator) << endl; }
+}
+
+Rational Rational::decimalToRational(double input)
+{
+    Rational temp;
+    ostringstream buf;
+    buf<<input;
+    string str_number=buf.str();
+    int pointIndex,realSize=0,num=0 ,den=0 ,sign=1;
+    if(str_number[0]=='-'){sign*=-1;}
+    for(pointIndex=0; pointIndex<str_number.size() ; pointIndex++ )
+    {
+        if( str_number[pointIndex] == '.' ) { break; }
+    }
+    if( pointIndex == (str_number.size()) ) { return Rational(sign*stoi(str_number)) ; }//denominator=1
+    for(realSize=str_number.size()-1 ; realSize>pointIndex ;realSize--)
+    {
+        if(str_number[realSize]!='0'){ break; }
+    }
+    num+=stoi(str_number.substr(0,pointIndex)+str_number.substr(pointIndex+1 ,realSize+1));
+    den+=pow(10,realSize-pointIndex);
+    num*=sign;
+    return Rational(num,den);
+}
+unsigned Rational::gcd(unsigned n, unsigned m) const
+{
+    if (n < m)
+    {
+        n+=m;
+        m=n-m;
+        n=n-m;
+    }
+
+    unsigned _gcd = 1;
+    for (unsigned i = 1; i <= m; i++)
+    {
+        if (0 == n % i && 0 == m % i)
+        {
+            _gcd = i;
+        }
+    }
+
+    return _gcd;
+}
+
+unsigned Rational::lcm(unsigned a, unsigned b) const
+{
+    unsigned max = 0, min = 0;
+    if (a > b)
+    {
+        max = a;
+        min = b;
+    }
+    else
+    {
+        max = b;
+        min = a;
+    }
+
+    for (unsigned int i = 1; i <= min; i++)
+    {
+        if (0 == ((max * i) % min))
+        {
+            return max * i;
+        }
+    }
+
+    return a * b;
+}
+
+bool Rational::isValid() const
+{
+    return !(0 == denominator);
+}
+
+void Rational::reduce()
+{
+    unsigned _gcd = gcd(abs(numerator), abs(denominator));
+
+    numerator /= static_cast<int>(_gcd);
+    denominator /= static_cast<int>(_gcd);
+
+    if (denominator < 0)
+    {
+        denominator *= -1;
+        numerator *= -1;
+    }
+}
+ostream& operator<<(ostream& out ,const Rational& right)
+{
+    out<< right.numerator << '/' << right.denominator << endl ;
+
+    return out;
+}
+int main()
+{
+    Rational a(1,2),c;
+    double d=3;
+    c+=((d+=a)+a)+d;
+    cout<<c;
+    return 0;
+}
