@@ -14,7 +14,7 @@ using ContactList = vector<Contact>;
 
 Contact search_by_name(ContactList &contacts, string name);
 
-Contact search_by_family(ContactList &contacts, const string family);
+Contact search_by_family(ContactList &contacts, string family);
 
 Contact search_by_phone(ContactList &contacts, const string phone_number);
 
@@ -39,13 +39,19 @@ int main() {
 }
 
 void print_menu() {
-    // main menu
+    cout<<"Select the operation you want\n";
+    cout<<" a : Add a new person to the phonebook\n";
+    cout<<" b : Delete a person from the phonebook\n";
+    cout<<" c : View all phonebook people\n";
+    cout<<" d : Sort phonebook by last name\n";
+    cout<<" e : Search for a person by first name, last name or phone number\n";
+    cout<<" f : Exit the app\n";
 }
 
 void add_contact(ContactList &contacts) {
     Contact contact;
     // Get data
-    // first letters should be upper case
+    // first letters should be upper case -> use standard_name()
     // check if phone numbers are less than 3 or not
     contacts.push_back(contact);
 }
@@ -118,14 +124,52 @@ string standard_name(string name) {
     return result;
 }
 
-Contact search_by_family(ContactList &contacts, const string family) {
-    // as well as previous
-//    return contacts[index]
+Contact search_by_family(ContactList &contacts,string family) {
+    ContactList same_family;
+    family = standard_name(family);
+    for (int i = 0; i < contacts.size(); ++i) {
+        if (family == standard_name(contacts[i].last_name)) {
+            same_family.push_back(contacts[i]);
+        }
+    }
+
+    if (same_family.size() == 1) {
+        return same_family[0];
+    } else if (same_family.empty()) {
+        cout << "There is no contact with this last name" << endl;
+        return Contact{string(""), string(""), vector<string>{}};
+    } else {
+        int position;
+        cout << "There is several contact with this last name, as shown below:" << endl;
+        print_contacts(same_family);
+        cout << "Which " << family << " do you mean?" << endl;
+        cout << "Enter the number: ";
+        cin >> position;
+        return same_family[position - 1];
+    }
 }
 
 Contact search_by_phone(ContactList &contacts, const string phone_number) {
-    // as well as previous
-//    return contacts[index]
+    ContactList x;
+    for (int i = 0; i < contacts.size(); ++i) {
+        for (int j = 0; j < contacts[i].phone_numbers.size(); ++j) {
+            if (phone_number == contacts[i].phone_numbers[j]) {
+                x.push_back(contacts[i]) ;
+                break;
+            }
+        }
+    }
+    if(x.empty()){
+        cout << "There is no contact with this phone number" << endl;
+    }else if (x.size() > 1){
+        int pos;
+        cout << "Which contact do you mean?" << endl;
+        print_contacts(x);
+        cout << "Enter number: " << pos;
+        cin >> pos;
+        return x[pos-1];
+    }
+    return x[0];
 }
 
 void sort_by_family(ContactList &contacts) {
