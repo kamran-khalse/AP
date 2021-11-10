@@ -75,6 +75,7 @@ void print_menu() {
     cout<<" d : Sort phonebook by last name\n";
     cout<<" e : Search for a person by first name, last name or phone number\n";
     cout<<" f : Exit the app\n";
+    cout<<"\nEnter your selection :";
 }
 
 void add_contact(ContactList &contacts) {
@@ -115,12 +116,15 @@ void delete_contact(ContactList &contacts) {
     int selectNum;
     bool doSearch=true;
     string fName ,lName ,PhoneNumber;
-    cout<<"\nDelete Contact (Based on):\n1_First_Name\n2_Last_Name\n3_PhoneNumber\n4_Return to Pervious Page";
+
     while(doSearch)
     {
+        cout<<"\nDelete Contact (Based on):\n1_First_Name\n2_Last_Name\n3_PhoneNumber\n4_Return to Pervious Page";
+        cout<<"\nEnter Select num :";
         cin>>selectNum;
         if(selectNum==1)
         {
+            cout<<"\nEnter First Name :";
             Contact Cnt;
             cin>>fName;
             Cnt=search_by_name(contacts,fName);
@@ -134,6 +138,7 @@ void delete_contact(ContactList &contacts) {
         }
         if(selectNum==2)
         {
+            cout<<"\nEnter Last Name :";
             Contact Cnt;
             cin>>lName;
             Cnt=search_by_family(contacts,lName);
@@ -148,6 +153,7 @@ void delete_contact(ContactList &contacts) {
         }
         if(selectNum==3)
         {
+            cout<<"\nEnter PhoneNumber:";
             Contact Cnt;
             cin>>PhoneNumber;
             Cnt=search_by_phone(contacts,PhoneNumber);
