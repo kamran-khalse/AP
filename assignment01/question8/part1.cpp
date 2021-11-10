@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
-
+#include <cstring>
 using namespace std;
 
 struct Contact {
@@ -41,6 +41,7 @@ int main() {
     {
         char select;
         print_menu();
+        fflush(stdin);
         select=getchar();
         if(select=='a')
         {
@@ -60,7 +61,7 @@ int main() {
         }
         if(select=='e')
         {
-            
+
         }
         if(select=='f'){return 0;}
     }
@@ -87,17 +88,25 @@ void add_contact(ContactList &contacts) {
     cout<<"\nEnter LastName :";
     cin>>lName;
     contact.last_name = standard_name(lName);
-    
+
     int counterOfPhoneNumbers=0;
     // check if phone numbers are less than 3 or not
+    string next;
     while(counterOfPhoneNumbers<3)
     {
         cout<<endl<<counterOfPhoneNumbers+1<<"_Phone Number :";
         cin>>phone;
         contact.phone_numbers.push_back(phone);
+
+        cout<<"Next Phone Number (Y/N) ?";
+        cin>>next;
+        if(next=="N")
+        {
+            break;
+        }
         counterOfPhoneNumbers++;
     }
-    
+
     contacts.push_back(contact);
 }
 
@@ -135,7 +144,7 @@ void delete_contact(ContactList &contacts) {
                     contacts.erase(contacts.begin()+i);
                 }
             }
-            
+
         }
         if(selectNum==3)
         {
@@ -282,7 +291,7 @@ void sort_by_family(ContactList &contacts)
     for (int k=1;k<contacts.size(); k++)
     {
         flag=0;
-       
+
        for (int i=0; i< contacts.size()-k; i++)
        {
          if (contacts[i].last_name < contacts[i+1].last_name)
@@ -290,11 +299,11 @@ void sort_by_family(ContactList &contacts)
                 temp=contacts[i];
                 contacts[i]=contacts[i+1];
                 contacts[i+1]=temp;
-                flag=1; 
+                flag=1;
            }
        }
        if(flag==0){break;}
 
     }
-    
+
 }
