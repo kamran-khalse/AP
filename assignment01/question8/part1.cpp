@@ -18,11 +18,13 @@ Contact search_by_family(ContactList &contacts, string family);
 
 Contact search_by_phone(ContactList &contacts, const string phone_number);
 
-int delete_contact(ContactList &contacts);
+void delete_contact(ContactList &contacts);
 
 void add_contact(ContactList &contacts);
 
 void print_contacts(const ContactList &contacts);
+
+void sort_by_family(ContactList &contacts);
 
 void print_menu();
 
@@ -30,12 +32,38 @@ string standard_name(string name);
 
 int main() {
     ContactList contacts;
+    bool doSelect=true;
     contacts.push_back(Contact{"ali", "Reza", vector<string>{"123", "09121212121"}});
     contacts.push_back(Contact{"Gholi", "Faza", vector<string>{"567"}});
     contacts.push_back(Contact{"Ali", "Gholi", vector<string>{"12", "33", "23"}});
     contacts.push_back(Contact{"Soltan ali reza", "Gholi", vector<string>{"12", "33", "3213231312"}});
-    search_by_name(contacts, "ali");
-    // Contact *con = search_by_name(contacts, "ali");
+    while(doSelect)
+    {
+        char select;
+        print_menu();
+        select=getchar();
+        if(select=='a')
+        {
+            add_contact(contacts);
+        }
+        if(select=='b')
+        {
+            delete_contact(contacts);
+        }
+        if(select=='c')
+        {
+            print_contacts(contacts);
+        }
+        if(select=='d')
+        {
+            sort_by_family(contacts);
+        }
+        if(select=='e')
+        {
+            
+        }
+        if(select=='f'){return 0;}
+    }
 }
 
 void print_menu() {
@@ -51,13 +79,88 @@ void print_menu() {
 void add_contact(ContactList &contacts) {
     Contact contact;
     // Get data
+    string fName ,lName ,phone;
     // first letters should be upper case -> use standard_name()
+    cout<<"\nEnter FirstName :";
+    cin>>fName;
+    contact.first_name=standard_name(fName);
+    cout<<"\nEnter LastName :";
+    cin>>lName;
+    contact.last_name = standard_name(lName);
+    
+    int counterOfPhoneNumbers=0;
     // check if phone numbers are less than 3 or not
+    while(counterOfPhoneNumbers<3)
+    {
+        cout<<endl<<counterOfPhoneNumbers+1<<"_Phone Number :";
+        cin>>phone;
+        contact.phone_numbers.push_back(phone);
+        counterOfPhoneNumbers++;
+    }
+    
     contacts.push_back(contact);
 }
 
-int delete_contact(ContactList &contacts) {
+void delete_contact(ContactList &contacts) {
     // get name or family or number
+    int selectNum;
+    bool doSearch=true;
+    string fName ,lName ,PhoneNumber;
+    cout<<"\nDelete Contact (Based on):\n1_First_Name\n2_Last_Name\n3_PhoneNumber\n4_Return to Pervious Page";
+    while(doSearch)
+    {
+        cin>>selectNum;
+        if(selectNum==1)
+        {
+            Contact Cnt;
+            cin>>fName;
+            Cnt=search_by_name(contacts,fName);
+            for(int i=0;i<contacts.size();i++)
+            {
+                if((contacts[i].first_name==Cnt.first_name)&&(contacts[i].last_name==Cnt.last_name))
+                {
+                    contacts.erase(contacts.begin()+i);
+                }
+            }
+        }
+        if(selectNum==2)
+        {
+            Contact Cnt;
+            cin>>lName;
+            Cnt=search_by_family(contacts,lName);
+            for(int i=0;i<contacts.size();i++)
+            {
+                if((contacts[i].first_name==Cnt.first_name)&&(contacts[i].last_name==Cnt.last_name))
+                {
+                    contacts.erase(contacts.begin()+i);
+                }
+            }
+            
+        }
+        if(selectNum==3)
+        {
+            Contact Cnt;
+            cin>>PhoneNumber;
+            Cnt=search_by_phone(contacts,PhoneNumber);
+            for(int i=0 ;i<contacts.size();i++)
+            {
+                if(Cnt.phone_numbers.size()==contacts[i].phone_numbers.size())
+                {
+                    for(int j=0;j<Cnt.phone_numbers.size();j++)
+                    {
+                        if(Cnt.phone_numbers[j]==contacts[i].phone_numbers[j])
+                        {
+                            contacts.erase(contacts.begin()+i);
+                        }
+                    }
+                }
+            }
+        }
+        if(selectNum==4)
+        {
+            doSearch=false;
+        }
+    }
     // using one of the search functions
     // delete the contact
     // return 0 to invalid contact
@@ -172,8 +275,26 @@ Contact search_by_phone(ContactList &contacts, const string phone_number) {
     return x[0];
 }
 
-void sort_by_family(ContactList &contacts) {
-    // using string.compare
-    // all first letters should be upper case
-}
+void sort_by_family(ContactList &contacts)
+{
+    int flag;
+    Contact temp;
+    for (int k=1;k<contacts.size(); k++)
+    {
+        flag=0;
+       
+       for (int i=0; i< contacts.size()-k; i++)
+       {
+         if (contacts[i].last_name < contacts[i+1].last_name)
+           {
+                temp=contacts[i];
+                contacts[i]=contacts[i+1];
+                contacts[i+1]=temp;
+                flag=1; 
+           }
+       }
+       if(flag==0){break;}
 
+    }
+    
+}
