@@ -1,7 +1,7 @@
-/*
+/* 
  * =====================================================================================
  *    Description:  Exercise 1
- *
+ *//
  *        Created:  12/08/1400 12:03
  *       Compiler:  gcc
  *         Author:  Alireza Tomari - alireza.tomari1043@gmail.com
